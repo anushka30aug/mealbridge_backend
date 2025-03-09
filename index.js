@@ -1,19 +1,30 @@
 require('dotenv').config();
-const express = require('express')
-const app = express()
-const port = 3000
-const main = require('./connect');
+const express = require('express');
+const http = require('http');  
+const { Server } = require("socket.io");
+const main = require('./config/connect');
 
-main().then(()=>{
-  console.log("connected to db");
-}).catch((err)=>{
-  console.log("error connecting to db");
-})
- 
+const app = express();
+const port = 3001;
+const server = http.createServer(app); 
+
+const foodSocketHandler = require("./event/test");
+
+const io = new Server(server, {
+  cors: { origin: "*" },
+});
+main().then(() => {
+    console.log("Connected to DB");
+  })
+  .catch((err) => {
+    console.error("Error connecting to DB:", err);
+  });
+
 app.get('/', (req, res) => {
-  res.send('Hello World!');
-})
+  res.send('Hello world');
+});
 
-app.listen(port, () => {
-  console.log(`http://localhost:${port}`)
-})
+foodSocketHandler(io);
+server.listen(port, () => {
+  console.log(`MealBridge is running on port: http://localhost:${port}`);
+});
