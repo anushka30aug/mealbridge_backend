@@ -10,6 +10,7 @@ const server = http.createServer(app);
 
 const foodSocketHandler = require("./event/test");
 
+const cron = require("node-cron");
 const io = new Server(server, {
   cors: { origin: "*" },
 });
@@ -22,6 +23,10 @@ main().then(() => {
 
 app.get('/', (req, res) => {
   res.send('Hello world');
+});
+
+cron.schedule("5 * * * * *", () => {
+  console.log("cronjob");
 });
 
 foodSocketHandler(io);
