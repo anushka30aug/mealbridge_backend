@@ -3,7 +3,7 @@ const { Schema } = require('mongoose');
 
 const Receiver = new Schema({
     username: { type: String, required: true },
-    profilePic: { type: String },
+    profilePicture: { type: String },
     contact: { type: Number, length: 10 },
     email:{type:String , unique:true , require:true},
     rank: { type: Number },

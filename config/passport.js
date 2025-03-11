@@ -23,24 +23,23 @@ passport.use(
           user = await Donor.findOne({ emailAddress: profile.emails[0].value });
           if (!user) {
             user = await Donor.create({
-              name: profile.displayName,
-              emailAddress: profile.emails[0].value, 
+              username: profile.displayName,
+              email: profile.emails[0].value, 
               profilePicture: profile.photos[0].value,
-              googleId: profile.id,
-            });
-          }
-          user.customRedirect = `http://localhost:3000`;
-        } else if (state === "receiver") {
-          user = await Receiver.findOne({ emailAddress: profile.emails[0].value });
-          if (!user) {
-            user = await Receiver.create({
-              name: profile.displayName,
-              emailAddress: profile.emails[0].value,
-              profilePicture: profile.photos[0].value,
-              googleId: profile.id,
+             
             });
           }
           user.customRedirect = `http://localhost:3002`;
+        } else if (state === "receiver") {
+          user = await Receiver.findOne({ email: profile.emails[0].value });
+          if (!user) {
+            user = await Receiver.create({
+              username: profile.displayName,
+              email: profile.emails[0].value,
+              profilePicture: profile.photos[0].value,
+            });
+          }
+          user.customRedirect = `http://localhost:3000/meals`;
         } else {
           return done(new Error("Invalid state parameter"), null);
         }
