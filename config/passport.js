@@ -8,27 +8,29 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:5000/auth/google/callback",
+      callbackURL: "http://localhost:3001/mealbridge/authentication/google/callback",
       passReqToCallback: true, // Required to access req.customRedirect
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
-        const redirectUrl = req.query.state; // Passed from frontend
+        // const redirectUrl = req.query.redirect; 
+        const state = req.query.state;
+        // if (!redirectUrl) return done(new Error("Missing redirect URL"), null);
+        if (!state) return done(new Error("Missing state parameter"), null);
 
         let user;
-        if (redirectUrl.includes("donor")) {
-          // Check in Donor collection
+        if (state === "donor") {
           user = await Donor.findOne({ emailAddress: profile.emails[0].value });
           if (!user) {
             user = await Donor.create({
               name: profile.displayName,
-              emailAddress: profile.emails[0].value,
+              emailAddress: profile.emails[0].value, 
               profilePicture: profile.photos[0].value,
               googleId: profile.id,
             });
           }
-        } else if (redirectUrl.includes("receiver")) {
-          // Check in Receiver collection
+          user.customRedirect = `http://localhost:3000`;
+        } else if (state === "receiver") {
           user = await Receiver.findOne({ emailAddress: profile.emails[0].value });
           if (!user) {
             user = await Receiver.create({
@@ -38,11 +40,12 @@ passport.use(
               googleId: profile.id,
             });
           }
+          user.customRedirect = `http://localhost:3002`;
         } else {
-          return done(new Error("Invalid redirect parameter"), null);
+          return done(new Error("Invalid state parameter"), null);
         }
 
-        user.customRedirect = redirectUrl; // Store redirect info
+        // user.customRedirect = redirectUrl; 
         done(null, user);
       } catch (error) {
         done(error, null);
