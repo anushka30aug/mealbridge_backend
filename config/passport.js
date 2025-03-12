@@ -20,7 +20,7 @@ passport.use(
 
         let user;
         if (state === "donor") {
-          user = await Donor.findOne({ emailAddress: profile.emails[0].value });
+          user = await Donor.findOne({ email: profile.emails[0].value });
           if (!user) {
             user = await Donor.create({
               username: profile.displayName,
