@@ -17,6 +17,8 @@ const passport = require('passport');
 const io = new Server(server, {
   cors: { origin: "*" },
 });
+
+app.use(express.json());
 app.use(session({
   secret: process.env.SESSION_SECRET || "your_secret_key",
   resave: false,
@@ -37,7 +39,8 @@ app.get('/',  (req, res) => {
 });
 // redirect=${encodeURIComponent(FRONTEND_URL)}
 
-app.use("/mealbridge/authentication", require("./routes/auth"));
+app.use("/mealbridge/authentication", require("./routes/authentication/auth"));
+app.use("/mealbridge/user", require("./routes/user/profile"));
 
 cron.schedule("5 * * * * *", () => {
   console.log("cronjob");
