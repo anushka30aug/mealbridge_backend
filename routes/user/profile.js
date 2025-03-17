@@ -3,7 +3,7 @@ const route = express.Router();
 const tokenVerification = require('../../middleware/token_verification');
 const userController = require('../../controllers/user/profile');
 
-route.get('/fetch/:id',userController.fetchProfile);
+route.get('/:id',userController.fetchProfile);
 route.put('/update',tokenVerification,userController.editProfile);
 
 module.exports=route;

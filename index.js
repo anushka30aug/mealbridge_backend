@@ -39,8 +39,8 @@ app.get('/',  (req, res) => {
 });
 // redirect=${encodeURIComponent(FRONTEND_URL)}
 
-app.use("/mealbridge/authentication", require("./routes/authentication/auth"));
-app.use("/mealbridge/user/profile", require("./routes/user/profile"));
+app.use("/authentication", require("./routes/authentication/auth"));
+app.use("/user", require("./routes/user/profile"));
 
 cron.schedule("5 * * * * *", () => {
   console.log("cronjob");
