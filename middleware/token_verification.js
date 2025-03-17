@@ -8,7 +8,6 @@ const tokenVerification = (req, res, next) => {
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             res.status(401);
             console.log(res);
-            // return res.status(401).json({ error: true, message: "Invalid or missing authentication token" });
             throw new Error("Invalid or missing authentication token")
         }
 
