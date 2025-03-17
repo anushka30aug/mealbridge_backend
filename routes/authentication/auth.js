@@ -2,7 +2,6 @@
 const express = require("express");
 const passport = require("passport");
 const Router = express.Router();
-// const auth_controller = require('../controllers/AuthController');
 const jwt = require('jsonwebtoken');
  
 Router.get("/failed", (req, res)=>{

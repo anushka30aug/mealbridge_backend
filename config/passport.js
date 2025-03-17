@@ -8,7 +8,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3001/mealbridge/authentication/google/callback",
+      callbackURL: "http://localhost:3001/authentication/google/callback",
       passReqToCallback: true, // Required to access req.customRedirect
     },
     async (req, accessToken, refreshToken, profile, done) => {
