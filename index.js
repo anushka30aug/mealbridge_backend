@@ -1,46 +1,49 @@
-require('dotenv').config();
-require("./config/passport"); 
-const express = require('express');
-const http = require('http');  
+require("dotenv").config();
+require("./config/passport");
+const express = require("express");
+const http = require("http");
 const { Server } = require("socket.io");
-const main = require('./config/connect');
+const main = require("./config/connect");
 const app = express();
 const port = 3001;
 const session = require("express-session");
-const mongoose = require("mongoose")
-const server = http.createServer(app); 
+const mongoose = require("mongoose");
+const server = http.createServer(app);
 
 const foodSocketHandler = require("./event/test");
 
 const cron = require("node-cron");
-const passport = require('passport');
+const passport = require("passport");
 const io = new Server(server, {
   cors: { origin: "*" },
 });
 
 app.use(express.json());
-app.use(session({
-  secret: process.env.SESSION_SECRET || "your_secret_key",
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false } 
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "your_secret_key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false },
+  })
+);
 app.use(passport.initialize());
 app.use(passport.session());
-main().then(() => {
+main()
+  .then(() => {
     console.log("Connected to DB");
   })
   .catch((err) => {
     console.error("Error connecting to DB:", err);
   });
 
-app.get('/',  (req, res) => {
-  res.send('Hello world'); 
+app.get("/", (req, res) => {
+  res.send("Hello world");
 });
-// redirect=${encodeURIComponent(FRONTEND_URL)}
 
 app.use("/authentication", require("./routes/authentication/auth"));
 app.use("/user", require("./routes/user/profile"));
+app.use("/donation", require("./routes/donation/donation"));
 
 cron.schedule("5 * * * * *", () => {
   console.log("cronjob");

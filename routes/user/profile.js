@@ -1,9 +1,9 @@
-const express = require('express');
+const express = require("express");
 const route = express.Router();
-const tokenVerification = require('../../middleware/token_verification');
-const userController = require('../../controllers/user/profile');
+const tokenVerification = require("../../middleware/token_verification");
+const userController = require("../../controllers/user/profile");
 
-route.get('/:id',userController.fetchProfile);
-route.put('/update',tokenVerification,userController.editProfile);
+route.get("/:id", userController.fetchProfile);
+route.put("/update", tokenVerification, userController.editProfile);
 
-module.exports=route;
+module.exports = route;

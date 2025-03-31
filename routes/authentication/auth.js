@@ -30,6 +30,4 @@ Router.get(
   }
 );
 
-// Router.get("/logout", auth_controller.logout);
-
 module.exports = Router;
