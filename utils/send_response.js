@@ -1,8 +1,15 @@
-const sendResponse = (res, success, message, data = null, error = null, metadata = null) => {
-    if (!success && res.statusCode === 200) {
-        res.status(500);
-    }  
-    return res.json({ success, message, data, error, metadata });
-};
-
-module.exports = sendResponse;
+const sendResponse = (res, statusCode = 500, message, data = null, metadata = null) => {
+    const success = statusCode >= 200 && statusCode < 300;
+  
+    const responseStructure = {
+      success,
+      message,
+      ...(data && { data }),
+      ...(metadata && { metadata }),
+    };
+  
+    return res.status(statusCode).json(responseStructure);
+  };
+  
+  module.exports = sendResponse;
+  
