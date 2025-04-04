@@ -43,7 +43,10 @@ app.get("/", (req, res) => {
 
 app.use("/authentication", require("./routes/authentication/auth"));
 app.use("/user", require("./routes/universal/user/profile"));
-app.use("/donation", require("./routes/donor/donation"));
+app.use("/donor", require("./routes/donor/donation"));
+app.use("/donor", require("./routes/donor/profile"));
+app.use("/collector", require("./routes/collector/collection"));
+app.use("/collector", require("./routes/collector/profile"));
 
 cron.schedule("5 * * * * *", () => {
   console.log("cronjob");
