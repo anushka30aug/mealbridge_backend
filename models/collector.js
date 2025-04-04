@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
 
-const Receiver = new Schema({
+const Collector = new Schema({
   username: { type: String, required: true },
   profilePicture: { type: String },
   contact: { type: Number, length: 10 },
@@ -15,4 +15,4 @@ const Receiver = new Schema({
   postal_code: { type: Number },
 });
 
-module.exports = mongoose.model("Receiver", Receiver);
+module.exports = mongoose.model("Collector", Collector);

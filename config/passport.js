@@ -1,7 +1,7 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const Donor = require("../models/donor"); // Donor collection
-const Receiver = require("../models/receiver"); // Receiver collection
+const Collector = require("../models/collector");
 
 passport.use(
   new GoogleStrategy(
@@ -13,7 +13,7 @@ passport.use(
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
-        // const redirectUrl = req.query.redirect; 
+        // const redirectUrl = req.query.redirect;
         const state = req.query.state;
         // if (!redirectUrl) return done(new Error("Missing redirect URL"), null);
         if (!state) return done(new Error("Missing state parameter"), null);
@@ -24,16 +24,15 @@ passport.use(
           if (!user) {
             user = await Donor.create({
               username: profile.displayName,
-              email: profile.emails[0].value, 
+              email: profile.emails[0].value,
               profilePicture: profile.photos[0].value,
-             
             });
           }
           user.customRedirect = `http://localhost:3002`;
-        } else if (state === "receiver") {
-          user = await Receiver.findOne({ email: profile.emails[0].value });
+        } else if (state === "collector") {
+          user = await Collector.findOne({ email: profile.emails[0].value });
           if (!user) {
-            user = await Receiver.create({
+            user = await Collector.create({
               username: profile.displayName,
               email: profile.emails[0].value,
               profilePicture: profile.photos[0].value,
@@ -44,7 +43,7 @@ passport.use(
           return done(new Error("Invalid state parameter"), null);
         }
 
-        // user.customRedirect = redirectUrl; 
+        // user.customRedirect = redirectUrl;
         done(null, user);
       } catch (error) {
         done(error, null);
@@ -55,6 +54,6 @@ passport.use(
 
 passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser(async (id, done) => {
-  let user = await Donor.findById(id) || await Receiver.findById(id);
+  let user = (await Donor.findById(id)) || (await Collector.findById(id));
   done(null, user);
 });
