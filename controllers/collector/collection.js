@@ -142,7 +142,7 @@ exports.viewBookingHistory = asyncHandler(async (req, res) => {
       collector_id: collectorId,
       status: { $in: ["delivered", "expired", "cancelled"] },
     }).sort({ updatedAt: -1 });
-    
+
     sendResponse(res, 200, "Booking history fetched successfully", meals);
   } catch (error) {
     sendResponse(
