@@ -3,6 +3,7 @@ const sendResponse = require("../../utils/send_response");
 const Meal = require("../../models/meal");
 const Donor = require("../../models/donor");
 const ServerError = require("../../utils/server_error");
+const cloudinary = require("../../config/cloudinary");
 
 exports.postMeal = asyncHandler(async (req, res) => {
   try {
@@ -25,8 +26,17 @@ exports.postMeal = asyncHandler(async (req, res) => {
       throw new ServerError("Donor not found.", 404);
     }
 
+    let imageUrl = "";
+
+    if (image) {
+      const uploadResult = await cloudinary.uploader.upload(image, {
+        folder: "meals",
+      });
+      imageUrl = uploadResult.secure_url;
+    }
+
     const newMeal = new Meal({
-      image,
+      image: imageUrl,
       donor_id: donor.id,
       food_desc,
       veg,
@@ -52,7 +62,6 @@ exports.postMeal = asyncHandler(async (req, res) => {
     );
   }
 });
-
 exports.getActiveMeals = asyncHandler(async (req, res) => {
   try {
     const donor = await Donor.findById(req.user.id);
