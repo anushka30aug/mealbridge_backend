@@ -138,10 +138,11 @@ exports.viewBookingHistory = asyncHandler(async (req, res) => {
       throw new ServerError("Invalid collector ID", 400);
     }
 
-    const meals = await Meal.find({ collector_id: collectorId }).sort({
-      updatedAt: -1,
-    });
-
+    const meals = await Meal.find({
+      collector_id: collectorId,
+      status: { $in: ["delivered", "expired", "cancelled"] },
+    }).sort({ updatedAt: -1 });
+    
     sendResponse(res, 200, "Booking history fetched successfully", meals);
   } catch (error) {
     sendResponse(
