@@ -9,6 +9,7 @@ const port = 3001;
 const session = require("express-session");
 const mongoose = require("mongoose");
 const server = http.createServer(app);
+const sendResponse = require("./utils/send_response");
 
 const foodSocketHandler = require("./event/test");
 
@@ -53,6 +54,16 @@ cron.schedule("5 * * * * *", () => {
 });
 
 foodSocketHandler(io);
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  sendResponse(
+    res,
+    err.statusCode || 500,
+    err.message || "Internal Server Error"
+  );
+});
+
 server.listen(port, () => {
   console.log(`MealBridge is running on port: http://localhost:${port}`);
 });
