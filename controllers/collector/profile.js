@@ -1,13 +1,12 @@
 const asyncHandler = require("express-async-handler");
 const { default: mongoose } = require("mongoose");
 const sendResponse = require("../../utils/send_response");
-const Collector = require("../../models/collecto");
+const Collector = require("../../models/collector");
 const ServerError = require("../../utils/server_error");
 
 exports.editProfile = asyncHandler(async (req, res) => {
   try {
-    const { username, contact, address, city, state, country, postal_code } =
-      req.body;
+    const { username, contact, address, city, state, country, postal_code } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(req.user.id)) {
       throw new ServerError("Invalid user ID format", 400);
