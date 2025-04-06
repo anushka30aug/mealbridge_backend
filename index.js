@@ -48,6 +48,7 @@ app.use("/donor", require("./routes/donor/donation"));
 app.use("/donor", require("./routes/donor/profile"));
 app.use("/collector", require("./routes/collector/collection"));
 app.use("/collector", require("./routes/collector/profile"));
+app.use("/meal", require("./routes/meals/otp"));
 
 cron.schedule("5 * * * * *", () => {
   console.log("cronjob");

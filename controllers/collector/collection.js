@@ -58,7 +58,12 @@ exports.bookMeal = asyncHandler(async (req, res) => {
     throw new ServerError("Meal is not available for booking", 400);
   }
 
-  meal.collector_id = collectorId;
+  const collector = await Collector.findById(collectorId);
+  if (!collector) {
+    throw new ServerError("Collector not found", 404);
+  }
+  meal.collectorId = collectorId;
+  meal.collectorOtp=collector.staticOtp;
   meal.status = "reserved";
 
   await meal.save();
@@ -87,7 +92,7 @@ exports.cancelBookedMeal = asyncHandler(async (req, res) => {
     throw new ServerError("Meal not found", 404);
   }
 
-  if (meal.collector_id?.toString() !== collectorId.toString()) {
+  if (meal.collectorId?.toString() !== collectorId.toString()) {
     throw new ServerError("You are not authorized to cancel this booking", 403);
   }
 
@@ -95,12 +100,27 @@ exports.cancelBookedMeal = asyncHandler(async (req, res) => {
     throw new ServerError("Only reserved meals can be cancelled", 400);
   }
 
-  meal.collector_id = null;
+  meal.collectorId = null;
+  meal.collectorOtp=null;
   meal.status = "available";
 
   await meal.save();
 
   sendResponse(res, 200, "Meal booking cancelled successfully", meal);
+});
+
+exports.viewBookedMeal=asyncHandler(async(req,res)=>{
+  const collectorId = req.user.id;
+  if(!mongoose.Types.ObjectId.isValid(collectorId)){
+    throw new ServerError("Invalid collector Id ",400);
+  }
+
+  const meals = await Meal.find({
+    collectorId: collectorId,
+    status: "reserved",
+  }).sort({ updatedAt: -1 }).select('-collectorOtp');
+
+  sendResponse(res, 200, "Booked meals fetched successfully", meals);
 });
 
 exports.viewBookingHistory = asyncHandler(async (req, res) => {
@@ -111,9 +131,9 @@ exports.viewBookingHistory = asyncHandler(async (req, res) => {
   }
 
   const meals = await Meal.find({
-    collector_id: collectorId,
-    status: { $in: ["delivered", "expired", "cancelled"] },
-  }).sort({ updatedAt: -1 });
+    collectorId: collectorId,
+    status: { $in: ["delivered", "expired"] },
+  }).sort({ updatedAt: -1 }).select('-collectorOtp');
 
   sendResponse(res, 200, "Booking history fetched successfully", meals);
 });
