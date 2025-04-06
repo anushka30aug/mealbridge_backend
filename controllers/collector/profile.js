@@ -12,7 +12,7 @@ exports.editProfile = asyncHandler(async (req, res) => {
     city,
     state,
     country,
-    postal_code,
+    postalCode,
   } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(req.user.id)) {
@@ -27,9 +27,9 @@ exports.editProfile = asyncHandler(async (req, res) => {
 
   //* If any address field is provided, ensure all are provided
   const anyAddressFieldPresent =
-    address || city || state || country || postal_code;
+    address || city || state || country || postalCode;
   const allAddressFieldsPresent =
-    address && city && state && country && postal_code;
+    address && city && state && country && postalCode;
 
   if (anyAddressFieldPresent && !allAddressFieldsPresent) {
     throw new ServerError(
@@ -46,10 +46,12 @@ exports.editProfile = asyncHandler(async (req, res) => {
     user.city = city;
     user.state = state;
     user.country = country;
-    user.postal_code = postal_code;
+    user.postalCode = postalCode;
   }
 
   await user.save();
 
   sendResponse(res, 200, "User profile updated successfully", user);
 });
+
+

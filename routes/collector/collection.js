@@ -5,6 +5,7 @@ const collectorController = require("../../controllers/collector/collection");
 
 route.get("/view-meals", tokenVerification, collectorController.getMeals);
 route.post("/book-meal", tokenVerification, collectorController.bookMeal);
+route.get("/view-booked-meal", tokenVerification, collectorController.viewBookedMeal);
 route.post(
   "/cancel-booked-meal",
   tokenVerification,
