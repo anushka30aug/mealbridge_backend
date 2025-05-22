@@ -6,7 +6,7 @@ const sendResponse = require("../../utils/send_response");
 const ServerError = require("../../utils/server_error");
 
 exports.getMeals = asyncHandler(async (req, res) => {
-  const collectorId = req.user.id;
+  const collectorId = req.user.userId;
 
   if (!mongoose.Types.ObjectId.isValid(collectorId)) {
     throw new ServerError("Invalid collector ID", 400);
@@ -35,7 +35,7 @@ exports.getMeals = asyncHandler(async (req, res) => {
 
 exports.bookMeal = asyncHandler(async (req, res) => {
   const { mealId } = req.body;
-  const collectorId = req.user.id;
+  const collectorId = req.user.userId;
 
   if (!mealId) {
     throw new ServerError("Meal ID is required", 400);
@@ -68,7 +68,7 @@ exports.bookMeal = asyncHandler(async (req, res) => {
 
 exports.cancelBookedMeal = asyncHandler(async (req, res) => {
   const { mealId } = req.body;
-  const collectorId = req.user.id;
+  const collectorId = req.user.userId;
 
   if (!mealId) {
     throw new ServerError("Meal ID is required", 400);
@@ -104,7 +104,7 @@ exports.cancelBookedMeal = asyncHandler(async (req, res) => {
 });
 
 exports.viewBookingHistory = asyncHandler(async (req, res) => {
-  const collectorId = req.user.id;
+  const collectorId = req.user.userId;
 
   if (!mongoose.Types.ObjectId.isValid(collectorId)) {
     throw new ServerError("Invalid collector ID", 400);

@@ -5,6 +5,10 @@ const Donor = require("../../models/donor");
 const ServerError = require("../../utils/server_error");
 const cloudinary = require("../../config/cloudinary");
 
+const {
+  emitMealCancelledToCollector,
+  emitMealCancelled,
+} = require("../../event/meal_events");
 exports.postMeal = asyncHandler(async (req, res) => {
   const {
     image,
@@ -20,7 +24,7 @@ exports.postMeal = asyncHandler(async (req, res) => {
     expiry_date,
   } = req.body;
 
-  const donor = await Donor.findById(req.user.id);
+  const donor = await Donor.findById(req.user.userId);
   if (!donor) {
     throw new ServerError("Donor not found.", 404);
   }
@@ -52,8 +56,9 @@ exports.postMeal = asyncHandler(async (req, res) => {
   await newMeal.save();
   return sendResponse(res, 200, "Meal Created", { meal: newMeal });
 });
+
 exports.getActiveMeals = asyncHandler(async (req, res) => {
-  const donor = await Donor.findById(req.user.id);
+  const donor = await Donor.findById(req.user.userId);
   if (!donor) {
     throw new ServerError("Donor not found.", 404);
   }
@@ -72,26 +77,33 @@ exports.getActiveMeals = asyncHandler(async (req, res) => {
 });
 
 exports.discardMealRequest = asyncHandler(async (req, res) => {
-  const { meal_id } = req.body;
+  const { mealId } = req.body;
 
-  const meal = await Meal.findById(meal_id);
+  const meal = await Meal.findById(mealId);
 
   if (!meal) {
     throw new ServerError("Meal not found.", 404);
   }
 
-  if (meal.donor_id.toString() !== req.user.id) {
+  if (meal.donor_id.toString() !== req.user.userId) {
     throw new ServerError("Unauthorized. You don't own this meal.", 403);
   }
 
-  if (meal.status !== "reserved" || !meal.receiver_id) {
+  if (meal.status !== "reserved" || !meal.collector_id) {
     throw new ServerError("This meal is not reserved by any receiver.", 400);
   }
 
   meal.status = "available";
-  meal.receiver_id = null;
-
+  let collectorId = meal.collector_id;
+  meal.collector_id = null;
   await meal.save();
+
+  emitMealCancelledToCollector({
+    collectorId: collectorId.toString(),
+    mealId: mealId,
+    food_desc: meal.food_desc,
+    donorId: meal.donor_id,
+  });
 
   return sendResponse(
     res,
@@ -122,8 +134,13 @@ exports.cancelMeal = asyncHandler(async (req, res) => {
 
   await meal.save();
 
-  // TODO: Emit socket event to collector if meal.collector_id exists
-  //* io.to(collector_id).emit("meal_cancelled", { meal_id, message: "Donor has cancelled the meal." });
+  // TODO: Testing to check if the sockets are working or not!
+  if (meal.collector_id) {
+    emitMealCancelled({
+      collectorId: meal.collector_id.toString(),
+      mealId: meal._id.toString(),
+    });
+  }
 
   return sendResponse(res, 200, "Meal cancelled successfully.", { meal });
 });
