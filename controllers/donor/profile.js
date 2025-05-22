@@ -26,9 +26,9 @@ exports.editProfile = asyncHandler(async (req, res) => {
 });
 
 exports.addAddress = asyncHandler(async (req, res) => {
-  const { address, city, state, country, postal_code } = req.body;
+  const { address, city, state, country, postalCode } = req.body;
 
-  if (!address || !city || !state || !country || !postal_code) {
+  if (!address || !city || !state || !country || !postalCode) {
     throw new ServerError("All address fields are required", 404);
   }
 
@@ -42,14 +42,14 @@ exports.addAddress = asyncHandler(async (req, res) => {
     throw new ServerError("You can only save up to 3 addresses", 400);
   }
 
-  donor.address.push({ address, city, state, country, postal_code });
+  donor.address.push({ address, city, state, country, postalCode });
   await donor.save();
 
   sendResponse(res, 200, "Address added successfully", donor.address);
 });
 
 exports.deleteAddress = asyncHandler(async (req, res) => {
-  const { address_id } = req.body;
+  const { addressId } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(req.user.id)) {
     throw new ServerError("Invalid user ID format", 400);
@@ -61,7 +61,7 @@ exports.deleteAddress = asyncHandler(async (req, res) => {
   }
 
   const addressIndex = donor.address.findIndex(
-    (addr) => addr._id.toString() === address_id
+    (addr) => addr._id.toString() === addressId
   );
 
   if (addressIndex === -1) {

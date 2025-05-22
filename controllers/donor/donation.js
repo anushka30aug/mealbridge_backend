@@ -12,16 +12,16 @@ const {
 exports.postMeal = asyncHandler(async (req, res) => {
   const {
     image,
-    food_desc,
+    foodDesc,
     veg,
-    feeds_upto,
+    feedsUpto,
     address,
     city,
     state,
     country,
-    postal_code,
-    preferred_time,
-    expiry_date,
+    postalCode,
+    preferredTime,
+    expiryDate,
   } = req.body;
 
   const donor = await Donor.findById(req.user.userId);
@@ -34,23 +34,23 @@ exports.postMeal = asyncHandler(async (req, res) => {
   if (image) {
     const uploadResult = await cloudinary.uploader.upload(image, {
       folder: "meals",
-    });
+    }); 
     imageUrl = uploadResult.secure_url;
   }
 
   const newMeal = new Meal({
     image: imageUrl,
-    donor_id: donor.id,
-    food_desc,
+    donorId: donor.id,
+    foodDesc,
     veg,
-    feeds_upto,
+    feedsUpto,
     address,
     city,
     state,
     country,
-    postal_code,
-    preferred_time,
-    expiry_date,
+    postalCode,
+    preferredTime,
+    expiryDate,
   });
 
   await newMeal.save();
@@ -64,8 +64,8 @@ exports.getActiveMeals = asyncHandler(async (req, res) => {
   }
 
   const activeMeals = await Meal.find({
-    donor_id: donor.id,
-    status: { $nin: ["delivered", "expired"] },
+    donorId: donor.id,
+    status: { $in: ["available", "reserved"] },
   });
 
   return sendResponse(
@@ -89,13 +89,15 @@ exports.discardMealRequest = asyncHandler(async (req, res) => {
     throw new ServerError("Unauthorized. You don't own this meal.", 403);
   }
 
-  if (meal.status !== "reserved" || !meal.collector_id) {
+   if (meal.status !== "reserved" || !meal.collector_id) {
     throw new ServerError("This meal is not reserved by any receiver.", 400);
   }
 
+
   meal.status = "available";
-  let collectorId = meal.collector_id;
+  const collectorId = meal.collector_id;
   meal.collector_id = null;
+
   await meal.save();
 
   emitMealCancelledToCollector({
@@ -114,15 +116,15 @@ exports.discardMealRequest = asyncHandler(async (req, res) => {
 });
 
 exports.cancelMeal = asyncHandler(async (req, res) => {
-  const { meal_id } = req.body;
+  const { mealId } = req.body;
 
-  const meal = await Meal.findById(meal_id);
+  const meal = await Meal.findById(mealId);
 
   if (!meal) {
     throw new ServerError("Meal not found.", 404);
   }
 
-  if (meal.donor_id.toString() !== req.user.id) {
+  if (meal.donorId.toString() !== req.user.id) {
     throw new ServerError("Unauthorized. You can't cancel this meal.", 403);
   }
 
@@ -149,9 +151,9 @@ exports.getMealHistory = asyncHandler(async (req, res) => {
   const donorId = req.user.id;
 
   const meals = await Meal.find({
-    donor_id: donorId,
+    donorId: donorId,
     status: { $in: ["delivered", "cancelled", "expired"] },
-  }).sort({ updatedAt: -1 }); // latest first
+  }).sort({ updatedAt: -1 }).select('-collectorOtp'); 
 
   return sendResponse(res, 200, "Meal history fetched successfully.", {
     meals,
