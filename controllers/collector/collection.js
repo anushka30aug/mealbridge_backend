@@ -6,7 +6,7 @@ const sendResponse = require("../../utils/send_response");
 const ServerError = require("../../utils/server_error");
 
 exports.getMeals = asyncHandler(async (req, res) => {
-  const collectorId = req.user.id;
+  const collectorId = req.user.userId;
 
   if (!mongoose.Types.ObjectId.isValid(collectorId)) {
     throw new ServerError("Invalid collector ID", 400);
@@ -35,7 +35,7 @@ exports.getMeals = asyncHandler(async (req, res) => {
 
 exports.bookMeal = asyncHandler(async (req, res) => {
   const { mealId } = req.body;
-  const collectorId = req.user.id;
+  const collectorId = req.user.userId;
 
   if (!mealId) {
     throw new ServerError("Meal ID is required", 400);
@@ -63,7 +63,7 @@ exports.bookMeal = asyncHandler(async (req, res) => {
     throw new ServerError("Collector not found", 404);
   }
   meal.collectorId = collectorId;
-  meal.collectorOtp=collector.staticOtp;
+  meal.collectorOtp = collector.staticOtp;
   meal.status = "reserved";
 
   await meal.save();
@@ -73,7 +73,7 @@ exports.bookMeal = asyncHandler(async (req, res) => {
 
 exports.cancelBookedMeal = asyncHandler(async (req, res) => {
   const { mealId } = req.body;
-  const collectorId = req.user.id;
+  const collectorId = req.user.userId;
 
   if (!mealId) {
     throw new ServerError("Meal ID is required", 400);
@@ -101,7 +101,7 @@ exports.cancelBookedMeal = asyncHandler(async (req, res) => {
   }
 
   meal.collectorId = null;
-  meal.collectorOtp=null;
+  meal.collectorOtp = null;
   meal.status = "available";
 
   await meal.save();
@@ -109,22 +109,24 @@ exports.cancelBookedMeal = asyncHandler(async (req, res) => {
   sendResponse(res, 200, "Meal booking cancelled successfully", meal);
 });
 
-exports.viewBookedMeal=asyncHandler(async(req,res)=>{
-  const collectorId = req.user.id;
-  if(!mongoose.Types.ObjectId.isValid(collectorId)){
-    throw new ServerError("Invalid collector Id ",400);
+exports.viewBookedMeal = asyncHandler(async (req, res) => {
+  const collectorId = req.user.userId;
+  if (!mongoose.Types.ObjectId.isValid(collectorId)) {
+    throw new ServerError("Invalid collector Id ", 400);
   }
 
   const meals = await Meal.find({
     collectorId: collectorId,
     status: "reserved",
-  }).sort({ updatedAt: -1 }).select('-collectorOtp');
+  })
+    .sort({ updatedAt: -1 })
+    .select("-collectorOtp");
 
   sendResponse(res, 200, "Booked meals fetched successfully", meals);
 });
 
 exports.viewBookingHistory = asyncHandler(async (req, res) => {
-  const collectorId = req.user.id;
+  const collectorId = req.user.userId;
 
   if (!mongoose.Types.ObjectId.isValid(collectorId)) {
     throw new ServerError("Invalid collector ID", 400);
@@ -133,7 +135,9 @@ exports.viewBookingHistory = asyncHandler(async (req, res) => {
   const meals = await Meal.find({
     collectorId: collectorId,
     status: { $in: ["delivered", "expired"] },
-  }).sort({ updatedAt: -1 }).select('-collectorOtp');
+  })
+    .sort({ updatedAt: -1 })
+    .select("-collectorOtp");
 
   sendResponse(res, 200, "Booking history fetched successfully", meals);
 });

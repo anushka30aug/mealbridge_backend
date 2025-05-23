@@ -7,16 +7,16 @@ const main = require("./config/connect");
 const app = express();
 const port = 3001;
 const session = require("express-session");
-const mongoose = require("mongoose");
 const server = http.createServer(app);
 const sendResponse = require("./utils/send_response");
 
-const foodSocketHandler = require("./event/test");
+const registerSocketHandlers = require("./event");
 
 const cron = require("node-cron");
 const passport = require("passport");
 const io = new Server(server, {
   cors: { origin: "*" },
+  methods: ["GET", "POST", "PUT"],
 });
 
 app.use(express.json());
@@ -54,7 +54,7 @@ cron.schedule("5 * * * * *", () => {
   console.log("cronjob");
 });
 
-foodSocketHandler(io);
+registerSocketHandlers(io);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
