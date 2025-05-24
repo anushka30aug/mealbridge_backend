@@ -7,11 +7,11 @@ const ServerError = require("../../utils/server_error");
 exports.editProfile = asyncHandler(async (req, res) => {
   const { username, contact } = req.body;
 
-  if (!mongoose.Types.ObjectId.isValid(req.user.id)) {
+  if (!mongoose.Types.ObjectId.isValid(req.user.userId)) {
     throw new ServerError("Invalid user ID format", 400);
   }
 
-  const user = await Donor.findById(req.user.id);
+  const user = await Donor.findById(req.user.userId);
 
   if (!user) {
     throw new ServerError("User not found", 404);
@@ -32,7 +32,7 @@ exports.addAddress = asyncHandler(async (req, res) => {
     throw new ServerError("All address fields are required", 404);
   }
 
-  const donor = await Donor.findById(req.user.id);
+  const donor = await Donor.findById(req.user.userId);
 
   if (!donor) {
     throw new ServerError("User not found", 404);
@@ -51,11 +51,11 @@ exports.addAddress = asyncHandler(async (req, res) => {
 exports.deleteAddress = asyncHandler(async (req, res) => {
   const { addressId } = req.body;
 
-  if (!mongoose.Types.ObjectId.isValid(req.user.id)) {
+  if (!mongoose.Types.ObjectId.isValid(req.user.userId)) {
     throw new ServerError("Invalid user ID format", 400);
   }
 
-  const donor = await Donor.findById(req.user.id);
+  const donor = await Donor.findById(req.user.userId);
   if (!donor) {
     throw new ServerError("User not found", 404);
   }

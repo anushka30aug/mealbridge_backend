@@ -15,11 +15,12 @@ exports.editProfile = asyncHandler(async (req, res) => {
     postalCode,
   } = req.body;
 
-  if (!mongoose.Types.ObjectId.isValid(req.user.id)) {
+  if (!mongoose.Types.ObjectId.isValid(req.user.userId)) {
+    // console.log(req.user);
     throw new ServerError("Invalid user ID format", 400);
   }
 
-  const user = await Collector.findById(req.user.id);
+  const user = await Collector.findById(req.user.userId);
 
   if (!user) {
     throw new ServerError("User not found", 404);
