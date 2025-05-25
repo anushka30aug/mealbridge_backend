@@ -1,5 +1,5 @@
-const { setCollectorIO } = require("./collector/collectorEvents");
-const { setDonorIO } = require("./donor/donorEvents");
+const { setCollectorIO } = require("./collector/collector_event");
+const { setDonorIO } = require("./donor/donor_event");
 const userConnection = require("./user_connection");
 
 const registerSocketHandlers = (io) => {

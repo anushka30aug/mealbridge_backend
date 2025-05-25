@@ -6,8 +6,8 @@ const sendResponse = require("../../utils/send_response");
 const ServerError = require("../../utils/server_error");
 const {
   emitMealBooked,
-  emitBookingCancelledByCollector,
-} = require("../../event/donor/donorEvents");
+  emitMealCancelledByCollector,
+} = require("../../event/donor/donor_event");
 
 exports.getMeals = asyncHandler(async (req, res) => {
   const collectorId = req.user.userId;
@@ -118,7 +118,7 @@ exports.cancelBookedMeal = asyncHandler(async (req, res) => {
   await meal.save();
 
   const { donorId } = meal;
-  emitBookingCancelledByCollector({
+  emitMealCancelledByCollector({
     donorId: donorId.toString(),
     mealId: mealId.toString(),
     collectorId: collectorId.toString(),

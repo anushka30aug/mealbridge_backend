@@ -5,15 +5,8 @@ const Collector = require("../../models/collector");
 const ServerError = require("../../utils/server_error");
 
 exports.editProfile = asyncHandler(async (req, res) => {
-  const {
-    username,
-    contact,
-    address,
-    city,
-    state,
-    country,
-    postalCode,
-  } = req.body;
+  const { username, contact, address, city, state, country, postalCode } =
+    req.body;
 
   if (!mongoose.Types.ObjectId.isValid(req.user.userId)) {
     // console.log(req.user);
@@ -54,5 +47,3 @@ exports.editProfile = asyncHandler(async (req, res) => {
 
   sendResponse(res, 200, "User profile updated successfully", user);
 });
-
-
