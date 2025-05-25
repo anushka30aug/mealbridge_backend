@@ -5,21 +5,15 @@ const Collector = require("../../models/collector");
 const ServerError = require("../../utils/server_error");
 
 exports.editProfile = asyncHandler(async (req, res) => {
-  const {
-    username,
-    contact,
-    address,
-    city,
-    state,
-    country,
-    postalCode,
-  } = req.body;
+  const { username, contact, address, city, state, country, postalCode } =
+    req.body;
 
-  if (!mongoose.Types.ObjectId.isValid(req.user.id)) {
+  if (!mongoose.Types.ObjectId.isValid(req.user.userId)) {
+    // console.log(req.user);
     throw new ServerError("Invalid user ID format", 400);
   }
 
-  const user = await Collector.findById(req.user.id);
+  const user = await Collector.findById(req.user.userId);
 
   if (!user) {
     throw new ServerError("User not found", 404);
@@ -53,5 +47,3 @@ exports.editProfile = asyncHandler(async (req, res) => {
 
   sendResponse(res, 200, "User profile updated successfully", user);
 });
-
-

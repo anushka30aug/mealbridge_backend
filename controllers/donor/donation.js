@@ -8,7 +8,9 @@ const cloudinary = require("../../config/cloudinary");
 const {
   emitMealCancelledToCollector,
   emitMealCancelled,
-} = require("../../event/meal_events");
+} = require("../../event/collector/collector_event");
+// const io = require("../../index");
+
 exports.postMeal = asyncHandler(async (req, res) => {
   const {
     image,
@@ -101,9 +103,9 @@ exports.discardMealRequest = asyncHandler(async (req, res) => {
 
   emitMealCancelledToCollector({
     collectorId: collectorId.toString(),
-    mealId: mealId,
-    foodDesc: meal.foodDesc,
-    donorId: meal.donorId,
+    mealId: mealId.toString(),
+    foodDesc: meal.foodDesc.toString(),
+    donorId: meal.donorId.toString(),
   });
 
   return sendResponse(
@@ -139,7 +141,7 @@ exports.cancelMeal = asyncHandler(async (req, res) => {
   if (meal.collectorId) {
     emitMealCancelled({
       collectorId: meal.collectorId.toString(),
-      mealId: meal._id.toString(),
+      mealId: mealId.toString(),
     });
   }
 

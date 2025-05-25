@@ -4,6 +4,10 @@ const Collector = require("../../models/collector");
 const mongoose = require("mongoose");
 const sendResponse = require("../../utils/send_response");
 const ServerError = require("../../utils/server_error");
+const {
+  emitMealBooked,
+  emitMealCancelledByCollector,
+} = require("../../event/donor/donor_event");
 
 exports.getMeals = asyncHandler(async (req, res) => {
   const collectorId = req.user.userId;
@@ -67,6 +71,13 @@ exports.bookMeal = asyncHandler(async (req, res) => {
   meal.status = "reserved";
 
   await meal.save();
+  const { donorId } = meal;
+
+  emitMealBooked({
+    donorId: donorId.toString(),
+    mealId: mealId.toString(),
+    collectorId: collectorId.toString(),
+  });
 
   sendResponse(res, 200, "Meal booked successfully", meal);
 });
@@ -105,6 +116,13 @@ exports.cancelBookedMeal = asyncHandler(async (req, res) => {
   meal.status = "available";
 
   await meal.save();
+
+  const { donorId } = meal;
+  emitMealCancelledByCollector({
+    donorId: donorId.toString(),
+    mealId: mealId.toString(),
+    collectorId: collectorId.toString(),
+  });
 
   sendResponse(res, 200, "Meal booking cancelled successfully", meal);
 });

@@ -3,10 +3,10 @@ const Collector = require("../../models/collector");
 const ServerError = require("../../utils/server_error");
 const mongoose = require("mongoose");
 const sendResponse = require("../../utils/send_response");
-const Meal = require('../../models/meal')
+const Meal = require("../../models/meal");
 
 exports.getOtp = asyncHandler(async (req, res) => {
-  const collectorId = req.user.id;
+  const collectorId = req.user.userId;
   if (!mongoose.Types.ObjectId.isValid(collectorId)) {
     throw new ServerError("Invalid collector Id ", 400);
   }
