@@ -104,7 +104,7 @@ exports.discardMealRequest = asyncHandler(async (req, res) => {
   emitMealCancelledToCollector({
     collectorId: collectorId.toString(),
     mealId: mealId.toString(),
-    foodDesc: meal.foodDesc.toString(),
+    foodDesc: meal.foodDesc,
     donorId: meal.donorId.toString(),
   });
 
