@@ -41,7 +41,7 @@ function emitMealExpired({ donorId, mealId, collectorId }) {
   console.log("Meal expired event emitted to collector:", collectorId);
 }
 
-function emitMealReceived({ donorId, collectorId, mealId }) {
+function emitMealReceivedToCollector({ donorId, collectorId, mealId }) {
   if (!io || !donorId || !collectorId || !mealId) return;
 
   if (collectorId)
@@ -56,5 +56,5 @@ module.exports = {
   emitMealCancelledToCollector,
   emitMealCancelled,
   emitMealExpired,
-  emitMealReceived,
+  emitMealReceivedToCollector,
 };

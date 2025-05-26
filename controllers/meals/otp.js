@@ -4,6 +4,10 @@ const ServerError = require("../../utils/server_error");
 const mongoose = require("mongoose");
 const sendResponse = require("../../utils/send_response");
 const Meal = require("../../models/meal");
+const {
+  emitMealReceivedToCollector,
+} = require("../../event/collector/collector_event");
+const { emitMealReceivedToDonor } = require("../../event/donor/donor_event");
 
 exports.getOtp = asyncHandler(async (req, res) => {
   const collectorId = req.user.userId;
@@ -55,6 +59,18 @@ exports.verifyOtp = asyncHandler(async (req, res) => {
 
   meal.status = "delivered";
   await meal.save();
+
+  emitMealReceivedToCollector({
+    donorId: meal.donorId.toString(),
+    collectorId: meal.collectorId.toString(),
+    mealId,
+  });
+
+  emitMealReceivedToDonor({
+    donorId: meal.donorId.toString(),
+    collectorId: meal.collectorId.toString(),
+    mealId,
+  });
 
   sendResponse(
     res,
