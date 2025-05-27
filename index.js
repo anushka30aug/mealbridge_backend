@@ -2,6 +2,7 @@ require("dotenv").config();
 require("./config/passport");
 const express = require("express");
 const http = require("http");
+const cors = require("cors");
 const { Server } = require("socket.io");
 const main = require("./config/connect");
 const app = express();
@@ -14,6 +15,14 @@ const registerSocketHandlers = require("./event");
 
 const cron = require("node-cron");
 const passport = require("passport");
+
+app.use(
+  cors({
+    origin: ["http://localhost:3002", "http://localhost:3000"],
+    credentials: true,
+  })
+);
+
 const io = new Server(server, {
   cors: { origin: "*" },
   methods: ["GET", "POST", "PUT"],
