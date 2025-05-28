@@ -31,6 +31,18 @@ exports.postMeal = asyncHandler(async (req, res) => {
     throw new ServerError("Donor not found.", 404);
   }
 
+  if (new Date(expiryDate) <= new Date()) {
+    throw new ServerError("Expiry date must be in the future.", 400);
+  }
+
+  if (new Date(preferredTime) <= new Date()) {
+    throw new ServerError("Preferred time must be in the future.", 400);
+  }
+
+  if (new Date(preferredTime) >= new Date(expiryDate)) {
+    throw new ServerError("Preferred time must be before expiry time.", 400);
+  }
+
   let imageUrl = "";
 
   if (image) {
@@ -68,7 +80,9 @@ exports.getActiveMeals = asyncHandler(async (req, res) => {
   const activeMeals = await Meal.find({
     donorId: donor.id,
     status: { $in: ["available", "reserved"] },
-  });
+  })
+    .sort({ createdAt: -1 })
+    .lean();
 
   return sendResponse(
     res,
@@ -149,7 +163,7 @@ exports.cancelMeal = asyncHandler(async (req, res) => {
 });
 
 exports.getMealHistory = asyncHandler(async (req, res) => {
-  const donorId = req.user.id;
+  const donorId = req.user.userId;
 
   const meals = await Meal.find({
     donorId: donorId,

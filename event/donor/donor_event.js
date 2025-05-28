@@ -14,7 +14,7 @@ function emitMealBooked({ donorId, mealId, collectorId }) {
   });
 }
 
-function emitMealExpired({ donorId, mealId }) {
+function emitMealExpiredToDonor({ donorId, mealId }) {
   if (!io || !donorId) return;
 
   io.to(donorId).emit("meal_expired", {
@@ -49,6 +49,6 @@ module.exports = {
   setDonorIO,
   emitMealCancelledByCollector,
   emitMealBooked,
-  emitMealExpired,
+  emitMealExpiredToDonor,
   emitMealReceivedToDonor,
 };

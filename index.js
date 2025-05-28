@@ -1,5 +1,6 @@
 require("dotenv").config();
 require("./config/passport");
+require("./jobs");
 const express = require("express");
 const http = require("http");
 const cors = require("cors");
@@ -10,10 +11,7 @@ const port = 3001;
 const session = require("express-session");
 const server = http.createServer(app);
 const sendResponse = require("./utils/send_response");
-
 const registerSocketHandlers = require("./event");
-
-const cron = require("node-cron");
 const passport = require("passport");
 
 app.use(
@@ -58,10 +56,6 @@ app.use("/donor", require("./routes/donor/profile"));
 app.use("/collector", require("./routes/collector/collection"));
 app.use("/collector", require("./routes/collector/profile"));
 app.use("/meal", require("./routes/meals/otp"));
-
-cron.schedule("5 * * * * *", () => {
-  console.log("cronjob");
-});
 
 registerSocketHandlers(io);
 
