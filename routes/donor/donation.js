@@ -4,7 +4,7 @@ const tokenVerification = require("../../middleware/token_verification");
 const donationController = require("../../controllers/donor/donation");
 
 route.post("/post-meal", tokenVerification, donationController.postMeal);
-route.delete("/cancel-meal", tokenVerification, donationController.cancelMeal);
+route.put("/cancel-meal", tokenVerification, donationController.cancelMeal);
 
 route.get(
   "/get-active-meal",

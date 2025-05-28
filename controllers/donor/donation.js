@@ -151,7 +151,6 @@ exports.cancelMeal = asyncHandler(async (req, res) => {
 
   await meal.save();
 
-  // TODO: Testing to check if the sockets are working or not!
   if (meal.collectorId) {
     emitMealCancelled({
       collectorId: meal.collectorId.toString(),
