@@ -18,7 +18,7 @@ const mealSchema = new mongoose.Schema(
     postalCode: { type: Number, required: true },
     preferredTime: { type: Date, required: true },
     expiryDate: { type: Date, required: true },
-    deliveryDate: { type: Date },
+    deliveryDate: { type: Date, default: null },
     status: {
       type: String,
       enum: ["available", "reserved", "delivered", "expired", "cancelled"],
@@ -31,7 +31,7 @@ const mealSchema = new mongoose.Schema(
     },
     collectorOtp: {
       type: Number,
-      ref: "Collector",
+      default: null,
     },
   },
   { timestamps: true }

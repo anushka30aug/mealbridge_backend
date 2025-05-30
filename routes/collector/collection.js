@@ -12,7 +12,7 @@ route.post("/book-meal", tokenVerification, collectorController.bookMeal);
 route.get(
   "/get-booked-meals",
   tokenVerification,
-  collectorController.viewBookedMeal
+  collectorController.getBookedMeal
 );
 route.post(
   "/cancel-booked-meal",
@@ -22,7 +22,7 @@ route.post(
 route.get(
   "/get-meal-booking-history",
   tokenVerification,
-  collectorController.viewMealBookingHistory
+  collectorController.getMealBookingHistory
 );
 
 module.exports = route;

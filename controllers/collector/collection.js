@@ -127,7 +127,7 @@ exports.cancelBookedMeal = asyncHandler(async (req, res) => {
   sendResponse(res, 200, "Meal booking cancelled successfully", meal);
 });
 
-exports.viewBookedMeal = asyncHandler(async (req, res) => {
+exports.getBookedMeal = asyncHandler(async (req, res) => {
   const collectorId = req.user.userId;
   if (!mongoose.Types.ObjectId.isValid(collectorId)) {
     throw new ServerError("Invalid collector Id ", 400);
@@ -143,7 +143,7 @@ exports.viewBookedMeal = asyncHandler(async (req, res) => {
   sendResponse(res, 200, "Booked meals fetched successfully", meals);
 });
 
-exports.viewMealBookingHistory = asyncHandler(async (req, res) => {
+exports.getMealBookingHistory = asyncHandler(async (req, res) => {
   const collectorId = req.user.userId;
 
   if (!mongoose.Types.ObjectId.isValid(collectorId)) {
