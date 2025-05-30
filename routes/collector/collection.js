@@ -3,18 +3,26 @@ const route = express.Router();
 const tokenVerification = require("../../middleware/token_verification");
 const collectorController = require("../../controllers/collector/collection");
 
-route.get("/view-meals", tokenVerification, collectorController.getMeals);
+route.get(
+  "/get-available-meals",
+  tokenVerification,
+  collectorController.getMeals
+);
 route.post("/book-meal", tokenVerification, collectorController.bookMeal);
-route.get("/view-booked-meal", tokenVerification, collectorController.viewBookedMeal);
+route.get(
+  "/get-booked-meals",
+  tokenVerification,
+  collectorController.viewBookedMeal
+);
 route.post(
   "/cancel-booked-meal",
   tokenVerification,
   collectorController.cancelBookedMeal
 );
 route.get(
-  "/history",
+  "/get-meal-booking-history",
   tokenVerification,
-  collectorController.viewBookingHistory
+  collectorController.viewMealBookingHistory
 );
 
 module.exports = route;

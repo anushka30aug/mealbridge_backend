@@ -143,7 +143,7 @@ exports.viewBookedMeal = asyncHandler(async (req, res) => {
   sendResponse(res, 200, "Booked meals fetched successfully", meals);
 });
 
-exports.viewBookingHistory = asyncHandler(async (req, res) => {
+exports.viewMealBookingHistory = asyncHandler(async (req, res) => {
   const collectorId = req.user.userId;
 
   if (!mongoose.Types.ObjectId.isValid(collectorId)) {

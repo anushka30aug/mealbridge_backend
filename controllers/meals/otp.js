@@ -56,8 +56,9 @@ exports.verifyOtp = asyncHandler(async (req, res) => {
   if (collector.staticOtp !== otp) {
     throw new ServerError("Invalid OTP", 401);
   }
-
+  meal.deliveryDate = new Date();
   meal.status = "delivered";
+  meal.collectorOtp = null;
   await meal.save();
 
   emitMealReceivedToCollector({

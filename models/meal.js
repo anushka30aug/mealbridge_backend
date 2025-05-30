@@ -12,7 +12,7 @@ const mealSchema = new mongoose.Schema(
     veg: { type: Boolean, required: true },
     feedsUpto: { type: Number, required: true, min: 3 },
     address: { type: String, required: true },
-    city: { type: String, requied: true },
+    city: { type: String, required: true },
     state: { type: String, required: true },
     country: { type: String, required: true },
     postalCode: { type: Number, required: true },
@@ -29,10 +29,10 @@ const mealSchema = new mongoose.Schema(
       ref: "Collector",
       default: null,
     },
-    collectorOtp:{
-      type:Number,
-      ref: "Collector"
-    }
+    collectorOtp: {
+      type: Number,
+      ref: "Collector",
+    },
   },
   { timestamps: true }
 );
