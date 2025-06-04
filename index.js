@@ -14,6 +14,9 @@ const sendResponse = require("./utils/send_response");
 const registerSocketHandlers = require("./event");
 const passport = require("passport");
 
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
+
 app.use(
   cors({
     origin: ["http://localhost:3002", "http://localhost:3000"],
