@@ -3,6 +3,7 @@ const Donor = require("../../../models/donor");
 const { default: mongoose } = require("mongoose");
 const sendResponse = require("../../../utils/send_response");
 const collector = require("../../../models/collector");
+const ServerError = require("../../../utils/server_error");
 
 exports.fetchProfile = asyncHandler(async (req, res) => {
   const userType = req.header("User-Type");
