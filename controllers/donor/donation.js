@@ -92,6 +92,27 @@ exports.getActiveMeals = asyncHandler(async (req, res) => {
   );
 });
 
+exports.getActiveMeal = asyncHandler(async (req, res) => {
+  const donor = await Donor.findById(req.user.userId);
+  if (!donor) {
+    throw new ServerError("Donor not found.", 404);
+  }
+
+  const mealId = req.params.id;
+
+  const meal = await Meal.findOne({
+    _id: mealId,
+    donorId: donor.id,
+    status: { $in: ["available", "reserved"] },
+  }).lean();
+
+  if (!meal) {
+    throw new ServerError("Meal not found or not active.", 404);
+  }
+
+  return sendResponse(res, 200, "Active meal fetched successfully", meal);
+});
+
 exports.discardMealRequest = asyncHandler(async (req, res) => {
   const { mealId } = req.body;
 
