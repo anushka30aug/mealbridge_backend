@@ -95,6 +95,7 @@ exports.getActiveMeals = asyncHandler(async (req, res) => {
 
 exports.getActiveMeal = asyncHandler(async (req, res) => {
   const donor = await Donor.findById(req.user.userId);
+
   if (!donor) {
     throw new ServerError("Donor not found.", 404);
   }
@@ -104,17 +105,23 @@ exports.getActiveMeal = asyncHandler(async (req, res) => {
   const meal = await Meal.findOne({
     _id: mealId,
     donorId: donor.id,
-    status: { $in: ["available", "reserved"] },
-  }).lean();
+  });
 
   if (!meal) {
-    throw new ServerError("Meal not found or not active.", 404);
+    throw new ServerError("Meal not found.", 404);
+  }
+
+  if (!["available", "reserved"].includes(meal.status)) {
+    throw new ServerError("Meal is not active. It is in history.", 409, {
+      status: meal.status,
+    });
   }
 
   if (meal.status === "reserved" && meal.collectorId) {
     const collector = await Collector.findById(meal.collectorId).select(
       "username profilePicture"
     );
+
     if (collector) {
       meal.collector = {
         username: collector.username,
@@ -217,13 +224,16 @@ exports.getMealHistoryById = asyncHandler(async (req, res) => {
   const meal = await Meal.findOne({
     _id: mealId,
     donorId: donorId,
-    status: { $in: ["delivered", "cancelled", "expired"] },
   })
     .select("-collectorOtp")
     .lean();
 
   if (!meal) {
     throw new ServerError("Historical meal not found.", 404);
+  }
+
+  if (!["cancelled", "expired", "delivered"].includes(meal.status)) {
+    throw new ServerError("Meal is active", 409, { status: meal.status });
   }
 
   if (meal.collectorId) {

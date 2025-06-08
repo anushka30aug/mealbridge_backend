@@ -67,7 +67,9 @@ app.use((err, req, res, next) => {
   sendResponse(
     res,
     err.statusCode || 500,
-    err.message || "Internal Server Error"
+    err.message || "Internal Server Error",
+    null,
+    err.meta || null
   );
 });
 
