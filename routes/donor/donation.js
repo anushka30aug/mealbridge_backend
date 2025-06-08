@@ -30,4 +30,10 @@ route.get(
   donationController.getMealHistory
 );
 
+route.get(
+  "/get-meal-history/:id",
+  tokenVerification,
+  donationController.getMealHistoryById
+);
+
 module.exports = route;

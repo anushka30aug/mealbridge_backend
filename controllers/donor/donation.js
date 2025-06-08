@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const sendResponse = require("../../utils/send_response");
 const Meal = require("../../models/meal");
 const Donor = require("../../models/donor");
+const Collector = require("../../models/collector");
 const ServerError = require("../../utils/server_error");
 const cloudinary = require("../../config/cloudinary");
 
@@ -110,6 +111,18 @@ exports.getActiveMeal = asyncHandler(async (req, res) => {
     throw new ServerError("Meal not found or not active.", 404);
   }
 
+  if (meal.status === "reserved" && meal.collectorId) {
+    const collector = await Collector.findById(meal.collectorId).select(
+      "username profilePicture"
+    );
+    if (collector) {
+      meal.collector = {
+        username: collector.username,
+        profilePicture: collector.profilePicture,
+      };
+    }
+  }
+
   return sendResponse(res, 200, "Active meal fetched successfully", meal);
 });
 
@@ -195,4 +208,41 @@ exports.getMealHistory = asyncHandler(async (req, res) => {
   return sendResponse(res, 200, "Meal history fetched successfully.", {
     meals,
   });
+});
+
+exports.getMealHistoryById = asyncHandler(async (req, res) => {
+  const donorId = req.user.userId;
+  const mealId = req.params.id;
+
+  const meal = await Meal.findOne({
+    _id: mealId,
+    donorId: donorId,
+    status: { $in: ["delivered", "cancelled", "expired"] },
+  })
+    .select("-collectorOtp")
+    .lean();
+
+  if (!meal) {
+    throw new ServerError("Historical meal not found.", 404);
+  }
+
+  if (meal.collectorId) {
+    const collector = await Collector.findById(meal.collectorId)
+      .select("username profilePicture")
+      .lean();
+
+    if (collector) {
+      meal.collector = {
+        name: collector.username,
+        profile: collector.profilePicture,
+      };
+    }
+  }
+
+  return sendResponse(
+    res,
+    200,
+    "Meal history item fetched successfully.",
+    meal
+  );
 });
