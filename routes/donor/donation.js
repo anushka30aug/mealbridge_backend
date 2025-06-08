@@ -11,15 +11,29 @@ route.get(
   tokenVerification,
   donationController.getActiveMeals
 );
+
+route.get(
+  "/get-active-meal/:id",
+  tokenVerification,
+  donationController.getActiveMeal
+);
+
 route.put(
   "/discard-meal-request",
   tokenVerification,
   donationController.discardMealRequest
 );
+
 route.get(
   "/get-meal-history",
   tokenVerification,
   donationController.getMealHistory
+);
+
+route.get(
+  "/get-meal-history/:id",
+  tokenVerification,
+  donationController.getMealHistoryById
 );
 
 module.exports = route;

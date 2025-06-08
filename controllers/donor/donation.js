@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const sendResponse = require("../../utils/send_response");
 const Meal = require("../../models/meal");
 const Donor = require("../../models/donor");
+const Collector = require("../../models/collector");
 const ServerError = require("../../utils/server_error");
 const cloudinary = require("../../config/cloudinary");
 
@@ -92,6 +93,46 @@ exports.getActiveMeals = asyncHandler(async (req, res) => {
   );
 });
 
+exports.getActiveMeal = asyncHandler(async (req, res) => {
+  const donor = await Donor.findById(req.user.userId);
+
+  if (!donor) {
+    throw new ServerError("Donor not found.", 404);
+  }
+
+  const mealId = req.params.id;
+
+  const meal = await Meal.findOne({
+    _id: mealId,
+    donorId: donor.id,
+  });
+
+  if (!meal) {
+    throw new ServerError("Meal not found.", 404);
+  }
+
+  if (!["available", "reserved"].includes(meal.status)) {
+    throw new ServerError("Meal is not active. It is in history.", 409, {
+      status: meal.status,
+    });
+  }
+
+  if (meal.status === "reserved" && meal.collectorId) {
+    const collector = await Collector.findById(meal.collectorId).select(
+      "username profilePicture"
+    );
+
+    if (collector) {
+      meal.collector = {
+        username: collector.username,
+        profilePicture: collector.profilePicture,
+      };
+    }
+  }
+
+  return sendResponse(res, 200, "Active meal fetched successfully", meal);
+});
+
 exports.discardMealRequest = asyncHandler(async (req, res) => {
   const { mealId } = req.body;
 
@@ -174,4 +215,44 @@ exports.getMealHistory = asyncHandler(async (req, res) => {
   return sendResponse(res, 200, "Meal history fetched successfully.", {
     meals,
   });
+});
+
+exports.getMealHistoryById = asyncHandler(async (req, res) => {
+  const donorId = req.user.userId;
+  const mealId = req.params.id;
+
+  const meal = await Meal.findOne({
+    _id: mealId,
+    donorId: donorId,
+  })
+    .select("-collectorOtp")
+    .lean();
+
+  if (!meal) {
+    throw new ServerError("Historical meal not found.", 404);
+  }
+
+  if (!["cancelled", "expired", "delivered"].includes(meal.status)) {
+    throw new ServerError("Meal is active", 409, { status: meal.status });
+  }
+
+  if (meal.collectorId) {
+    const collector = await Collector.findById(meal.collectorId)
+      .select("username profilePicture")
+      .lean();
+
+    if (collector) {
+      meal.collector = {
+        name: collector.username,
+        profile: collector.profilePicture,
+      };
+    }
+  }
+
+  return sendResponse(
+    res,
+    200,
+    "Meal history item fetched successfully.",
+    meal
+  );
 });
