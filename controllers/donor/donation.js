@@ -118,18 +118,29 @@ exports.getActiveMeal = asyncHandler(async (req, res) => {
   }
 
   if (meal.status === "reserved" && meal.collectorId) {
-    const collector = await Collector.findById(meal.collectorId).select(
-      "username profilePicture"
-    );
-
+    const collector = await Collector.findById(meal.collectorId);
     if (collector) {
-      meal.collector = {
+      // Convert Mongoose document to plain object
+      const mealObject = meal.toObject();
+
+      mealObject.collector = {
         username: collector.username,
         profilePicture: collector.profilePicture,
+        email: collector.email,
+        collectionCount: collector.donationCount,
+        createdAt: collector.createdAt,
       };
+
+      return sendResponse(
+        res,
+        200,
+        "Active meal fetched successfully",
+        mealObject
+      );
     }
   }
 
+  // If no collector, return the original meal
   return sendResponse(res, 200, "Active meal fetched successfully", meal);
 });
 

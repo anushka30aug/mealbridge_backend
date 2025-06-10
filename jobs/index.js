@@ -7,6 +7,6 @@ cron.schedule("32 18 * * *", () => {
   checkMealExpiry();
 });
 
-cron.schedule("*/15 * * * * *", () => {
-  console.log("[CRON] Hello every 15 seconds!");
+cron.schedule("*/50 * * * * *", () => {
+  console.log("[CRON] Hello every 50 seconds!");
 });
