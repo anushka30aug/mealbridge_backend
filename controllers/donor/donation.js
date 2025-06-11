@@ -105,7 +105,7 @@ exports.getActiveMeal = asyncHandler(async (req, res) => {
   const meal = await Meal.findOne({
     _id: mealId,
     donorId: donor.id,
-  });
+  }).lean();
 
   if (!meal) {
     throw new ServerError("Meal not found.", 404);
@@ -126,6 +126,9 @@ exports.getActiveMeal = asyncHandler(async (req, res) => {
       meal.collector = {
         username: collector.username,
         profilePicture: collector.profilePicture,
+        collectionCount: collector.donationCount,
+        contact: collector.contact,
+        createdAt: collector.createdAt,
       };
     }
   }
@@ -245,6 +248,9 @@ exports.getMealHistoryById = asyncHandler(async (req, res) => {
       meal.collector = {
         name: collector.username,
         profile: collector.profilePicture,
+        collectionCount: collector.donationCount,
+        contact: collector.contact,
+        createdAt: collector.createdAt,
       };
     }
   }
