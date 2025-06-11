@@ -6,7 +6,3 @@ cron.schedule("32 18 * * *", () => {
   console.log("[CRON] Running daily meal expiry job at 12:00 PM...");
   checkMealExpiry();
 });
-
-cron.schedule("*/15 * * * * *", () => {
-  console.log("[CRON] Hello every 15 seconds!");
-});

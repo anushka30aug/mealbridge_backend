@@ -105,7 +105,7 @@ exports.getActiveMeal = asyncHandler(async (req, res) => {
   const meal = await Meal.findOne({
     _id: mealId,
     donorId: donor.id,
-  });
+  }).lean();
 
   if (!meal) {
     throw new ServerError("Meal not found.", 404);
