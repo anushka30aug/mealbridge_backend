@@ -118,9 +118,7 @@ exports.getActiveMeal = asyncHandler(async (req, res) => {
   }
 
   if (meal.status === "reserved" && meal.collectorId) {
-    const collector = await Collector.findById(meal.collectorId).select(
-      "username profilePicture"
-    );
+    const collector = await Collector.findById(meal.collectorId);
 
     if (collector) {
       meal.collector = {
