@@ -213,9 +213,7 @@ exports.getMealHistory = asyncHandler(async (req, res) => {
     .sort({ updatedAt: -1 })
     .select("-collectorOtp");
 
-  return sendResponse(res, 200, "Meal history fetched successfully.", {
-    meals,
-  });
+  return sendResponse(res, 200, "Meal history fetched successfully.", meals);
 });
 
 exports.getMealHistoryById = asyncHandler(async (req, res) => {
@@ -238,14 +236,12 @@ exports.getMealHistoryById = asyncHandler(async (req, res) => {
   }
 
   if (meal.collectorId) {
-    const collector = await Collector.findById(meal.collectorId)
-      .select("username profilePicture")
-      .lean();
+    const collector = await Collector.findById(meal.collectorId).lean();
 
     if (collector) {
       meal.collector = {
-        name: collector.username,
-        profile: collector.profilePicture,
+        username: collector.username,
+        profilePicture: collector.profilePicture,
         collectionCount: collector.donationCount,
         contact: collector.contact,
         createdAt: collector.createdAt,
