@@ -13,14 +13,11 @@ const Donor = new Schema(
   {
     username: { type: String, required: true },
     profilePicture: { type: String },
-    contact: { type: Number, length: 10 },
+    contact: { type: String, length: 10, default: null },
     email: { type: String, unique: true, required: true },
     rank: { type: Number },
-    donationCount: { type: Number },
-    address: {
-      type: [addressSchema],
-      validate: [(arr) => arr.length <= 3, "Maximum 3 addresses allowed"],
-    },
+    donationCount: { type: Number, default: 0 },
+    address: { type: addressSchema, default: null },
   },
   {
     timestamps: true,

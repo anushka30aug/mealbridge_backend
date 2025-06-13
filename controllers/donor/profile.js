@@ -4,6 +4,17 @@ const { default: mongoose } = require("mongoose");
 const sendResponse = require("../../utils/send_response");
 const ServerError = require("../../utils/server_error");
 
+exports.getDonor = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const donor = await Donor.findById(id);
+  if (!donor) {
+    throw new ServerError("Donor not found.", 404);
+  }
+  console.log(donor);
+
+  sendResponse(res, 200, "Donor profile fetched successfully", donor);
+});
+
 exports.editProfile = asyncHandler(async (req, res) => {
   const { username, contact } = req.body;
 
@@ -26,10 +37,10 @@ exports.editProfile = asyncHandler(async (req, res) => {
 });
 
 exports.addAddress = asyncHandler(async (req, res) => {
-  const { address, city, state, country, postalCode } = req.body;
+  const { address, city, state, country, postalCode, contact } = req.body;
 
   if (!address || !city || !state || !country || !postalCode) {
-    throw new ServerError("All address fields are required", 404);
+    throw new ServerError("All address fields are required", 400);
   }
 
   const donor = await Donor.findById(req.user.userId);
@@ -38,16 +49,20 @@ exports.addAddress = asyncHandler(async (req, res) => {
     throw new ServerError("User not found", 404);
   }
 
-  if (donor.address.length >= 3) {
-    throw new ServerError("You can only save up to 3 addresses", 400);
+  if (!donor.contact) {
+    if (!contact) {
+      throw new ServerError("Contact number is required", 400);
+    }
+    donor.contact = contact;
   }
 
-  donor.address.push({ address, city, state, country, postalCode });
+  donor.address = { address, city, state, country, postalCode };
   await donor.save();
 
   sendResponse(res, 200, "Address added successfully", donor.address);
 });
 
+// ! Depreciated
 exports.deleteAddress = asyncHandler(async (req, res) => {
   const { addressId } = req.body;
 
