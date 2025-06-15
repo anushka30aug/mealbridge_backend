@@ -10,7 +10,6 @@ exports.getDonor = asyncHandler(async (req, res) => {
   if (!donor) {
     throw new ServerError("Donor not found.", 404);
   }
-  console.log(donor);
 
   sendResponse(res, 200, "Donor profile fetched successfully", donor);
 });

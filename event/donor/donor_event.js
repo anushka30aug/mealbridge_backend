@@ -4,44 +4,73 @@ function setDonorIO(ioInstance) {
   io = ioInstance;
 }
 
-function emitMealBooked({ donorId, mealId, collectorId }) {
+function emitMealBooked({
+  donorId,
+  mealId,
+  collectorId,
+  collectorName,
+  foodDesc,
+  image,
+}) {
   if (!io || !donorId) return;
-
+  const message = `${collectorName} has booked your donation.`;
   io.to(donorId).emit("meal_booked", {
     mealId,
     collectorId,
-    message: "Your requested donation has been accepted",
+    message,
+    foodDesc,
+    image,
   });
 }
 
-function emitMealExpiredToDonor({ donorId, mealId }) {
-  if (!io || !donorId) return;
+function emitMealExpiredToDonor({ donorId, mealId, foodDesc, image }) {
+  if (!io || !donorId || !mealId) return;
 
   io.to(donorId).emit("meal_expired", {
     mealId,
     message: "Your listed meal has expired",
+    foodDesc,
+    image,
   });
-
-  console.log("Meal expired event emitted to donor:", donorId);
 }
 
-function emitMealReceivedToDonor({ donorId, collectorId, mealId }) {
+function emitMealReceivedToDonor({
+  donorId,
+  collectorId,
+  mealId,
+  collectorName,
+  foodDesc,
+  image,
+}) {
   if (!io || !donorId || !collectorId || !mealId) return;
 
-  if (donorId)
-    io.to(donorId).emit("meal_received", {
-      mealId,
-      message: "Collector has successfully received the meal",
-    });
+  io.to(donorId).emit("meal_received", {
+    mealId,
+    collectorId,
+    collectorName,
+    foodDesc,
+    image,
+    message: `${collectorName} has successfully received your meal.`,
+  });
 }
 
-function emitMealCancelledByCollector({ donorId, mealId, collectorId }) {
+function emitMealCancelledByCollector({
+  donorId,
+  mealId,
+  collectorId,
+  collectorName,
+  foodDesc,
+  image,
+}) {
   if (!io || !donorId) return;
 
   io.to(donorId).emit("meal_reservation_cancelled_by_collector", {
     mealId,
     collectorId,
-    message: "Collector has cancelled their booking",
+    collectorName,
+    foodDesc,
+    image,
+    message: `${collectorName} has cancelled their reservation.`,
   });
 }
 

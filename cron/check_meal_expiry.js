@@ -28,12 +28,16 @@ const checkMealExpiry = async () => {
           donorId: meal.donorId.toHexString(),
           mealId: meal._id.toString(),
           collectorId: meal.collectorId.toString(),
+          foodDesc: meal.foodDesc,
+          image: meal.image,
         });
       }
 
       emitMealExpiredToDonor({
         donorId: meal.donorId.toHexString(),
         mealId: meal._id.toString(),
+        foodDesc: meal.foodDesc,
+        image: meal.image,
       });
 
       meal.status = "expired";
