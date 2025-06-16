@@ -70,7 +70,10 @@ exports.verifyOtp = asyncHandler(async (req, res) => {
   emitMealReceivedToDonor({
     donorId: meal.donorId.toString(),
     collectorId: meal.collectorId.toString(),
-    mealId,
+    mealId: mealId.toString(),
+    collectorName: collector.username,
+    foodDesc: meal.foodDesc,
+    image: meal.image,
   });
 
   sendResponse(

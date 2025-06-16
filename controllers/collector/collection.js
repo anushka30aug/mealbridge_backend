@@ -77,6 +77,9 @@ exports.bookMeal = asyncHandler(async (req, res) => {
     donorId: donorId.toString(),
     mealId: mealId.toString(),
     collectorId: collectorId.toString(),
+    collectorName: collector.username,
+    foodDesc: meal.foodDesc,
+    image: meal.image,
   });
 
   sendResponse(res, 200, "Meal booked successfully", meal);
@@ -85,6 +88,11 @@ exports.bookMeal = asyncHandler(async (req, res) => {
 exports.cancelBookedMeal = asyncHandler(async (req, res) => {
   const { mealId } = req.body;
   const collectorId = req.user.userId;
+  const collector = await Collector.findById(collectorId);
+
+  if (!collector) {
+    throw new ServerError("Collector may be deleted", 404);
+  }
 
   if (!mealId) {
     throw new ServerError("Meal ID is required", 400);
@@ -122,6 +130,9 @@ exports.cancelBookedMeal = asyncHandler(async (req, res) => {
     donorId: donorId.toString(),
     mealId: mealId.toString(),
     collectorId: collectorId.toString(),
+    collectorName: collector.username,
+    foodDesc: meal.foodDesc,
+    image: meal.image,
   });
 
   sendResponse(res, 200, "Meal booking cancelled successfully", meal);
