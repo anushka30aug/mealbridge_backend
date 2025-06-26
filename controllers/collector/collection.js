@@ -22,7 +22,7 @@ exports.getMeals = asyncHandler(async (req, res) => {
     throw new ServerError("Collector not found", 404);
   }
 
-  const { city, state } = collector;
+  const { city, state } = collector.address;
 
   if (!city || !state) {
     throw new ServerError("Collector city or state is missing", 400);
@@ -163,7 +163,7 @@ exports.getMealBookingHistory = asyncHandler(async (req, res) => {
 
   const meals = await Meal.find({
     collectorId: collectorId,
-    status: { $in: ["delivered", "expired"] },
+    status: { $in: ["delivered", "expired", "cancelled"] },
   })
     .sort({ updatedAt: -1 })
     .select("-collectorOtp");

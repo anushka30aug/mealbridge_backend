@@ -4,56 +4,82 @@ function setCollectorIO(ioInstance) {
   io = ioInstance;
 }
 
-const emitMealCancelledToCollector = ({
+const emitMealReservationCancelledByDonor = ({
   collectorId,
+  donorId,
   mealId,
   foodDesc,
-  donorId,
+  image,
 }) => {
-  if (!io || !collectorId) return;
+  if (!io || !collectorId || !donorId) return;
 
   io.to(collectorId).emit("meal_reservation_cancelled_by_donor", {
     mealId,
     foodDesc,
     donorId,
-    message: `The donor has cancelled your meal reservation: ${foodDesc}`,
+    image,
+    message: `The donor has cancelled your meal reservation of ${foodDesc}`,
   });
 };
 
-function emitMealCancelled({ collectorId, mealId }) {
+function emitMealCancelled({ collectorId, mealId, foodDesc, donorId, image }) {
   if (!io || !collectorId) return;
 
   io.to(collectorId).emit("meal_cancelled", {
     mealId,
-    message: "Donor has cancelled the meal listing.",
+    donorId,
+    image,
+    foodDesc,
+    message: `Donor has cancelled Donation of ${foodDesc}`,
   });
 }
 
-function emitMealExpiredToCollector({ donorId, mealId, collectorId }) {
+function emitMealExpiredToCollector({
+  donorId,
+  mealId,
+  collectorId,
+  foodDesc,
+  image,
+}) {
   if (!io || !donorId || !collectorId) return;
 
   io.to(collectorId).emit("meal_expired", {
     mealId,
     donorId,
-    message: "Your booked meal has expired",
+    image,
+    foodDesc,
+    message: `Your booked ${foodDesc} has expired`,
   });
 
   console.log("Meal expired event emitted to collector:", collectorId);
 }
 
-function emitMealReceivedToCollector({ donorId, collectorId, mealId }) {
-  if (!io || !donorId || !collectorId || !mealId) return;
+function emitMealReceivedToCollector({
+  donorId,
+  collectorId,
+  mealId,
+  donorName,
+  foodDesc,
+  image,
+}) {
+  if (!io || !collectorId || !donorId) return;
 
-  if (collectorId)
-    io.to(collectorId).emit("meal_received", {
-      mealId,
-      message: "You have successfully collected the meal",
-    });
+  io.to(collectorId).emit("meal_received", {
+    donorId,
+    collectorId,
+    mealId,
+    donorName,
+    foodDesc,
+    image,
+    message: `You have received the meal: ${foodDesc}`,
+  });
+
+  console.log("Meal received event emitted to collector:", collectorId);
 }
 
 module.exports = {
   setCollectorIO,
-  emitMealCancelledToCollector,
+  emitMealReservationCancelledByDonor,
   emitMealCancelled,
   emitMealExpiredToCollector,
   emitMealReceivedToCollector,

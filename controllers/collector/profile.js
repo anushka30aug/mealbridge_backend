@@ -4,12 +4,19 @@ const sendResponse = require("../../utils/send_response");
 const Collector = require("../../models/collector");
 const ServerError = require("../../utils/server_error");
 
+exports.getCollector = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const donor = await Collector.findById(id);
+  if (!donor) {
+    throw new ServerError("Collector not found.", 404);
+  }
+  sendResponse(res, 200, "Collector profile fetched successfully", donor);
+});
+
 exports.editProfile = asyncHandler(async (req, res) => {
-  const { username, contact, address, city, state, country, postalCode } =
-    req.body;
+  const { username, contact, address } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(req.user.userId)) {
-    // console.log(req.user);
     throw new ServerError("Invalid user ID format", 400);
   }
 
@@ -19,11 +26,14 @@ exports.editProfile = asyncHandler(async (req, res) => {
     throw new ServerError("User not found", 404);
   }
 
-  //* If any address field is provided, ensure all are provided
-  const anyAddressFieldPresent =
-    address || city || state || country || postalCode;
+  const anyAddressFieldPresent = !!address;
   const allAddressFieldsPresent =
-    address && city && state && country && postalCode;
+    address &&
+    address.address &&
+    address.city &&
+    address.state &&
+    address.country &&
+    address.postalCode;
 
   if (anyAddressFieldPresent && !allAddressFieldsPresent) {
     throw new ServerError(
@@ -37,10 +47,6 @@ exports.editProfile = asyncHandler(async (req, res) => {
 
   if (allAddressFieldsPresent) {
     user.address = address;
-    user.city = city;
-    user.state = state;
-    user.country = country;
-    user.postalCode = postalCode;
   }
 
   await user.save();
