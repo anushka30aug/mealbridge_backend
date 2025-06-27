@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Collector = require("../../models/collector");
+const Donor = require("../../models/donor");
 const ServerError = require("../../utils/server_error");
 const mongoose = require("mongoose");
 const sendResponse = require("../../utils/send_response");
@@ -53,6 +54,11 @@ exports.verifyOtp = asyncHandler(async (req, res) => {
     throw new ServerError("Associated collector not found", 404);
   }
 
+  const donor = await Donor.findById(meal.donorId);
+  if (!donor) {
+    throw new ServerError("Associated donor not found", 404);
+  }
+
   if (collector.staticOtp !== otp) {
     throw new ServerError("Invalid OTP", 401);
   }
@@ -64,7 +70,10 @@ exports.verifyOtp = asyncHandler(async (req, res) => {
   emitMealReceivedToCollector({
     donorId: meal.donorId.toString(),
     collectorId: meal.collectorId.toString(),
-    mealId,
+    mealId: mealId.toString(),
+    donorName: donor.username,
+    foodDesc: meal.foodDesc,
+    image: meal.image,
   });
 
   emitMealReceivedToDonor({

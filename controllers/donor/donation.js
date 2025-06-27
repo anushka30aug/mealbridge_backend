@@ -7,10 +7,9 @@ const ServerError = require("../../utils/server_error");
 const cloudinary = require("../../config/cloudinary");
 
 const {
-  emitMealCancelledToCollector,
   emitMealCancelled,
+  emitMealReservationCancelledByDonor,
 } = require("../../event/collector/collector_event");
-// const io = require("../../index");
 
 exports.postMeal = asyncHandler(async (req, res) => {
   const {
@@ -157,11 +156,12 @@ exports.discardMealRequest = asyncHandler(async (req, res) => {
   meal.collectorOtp = null;
   await meal.save();
 
-  emitMealCancelledToCollector({
+  emitMealReservationCancelledByDonor({
     collectorId: collectorId.toString(),
+    donorId: meal.donorId.toString(),
     mealId: mealId.toString(),
     foodDesc: meal.foodDesc,
-    donorId: meal.donorId.toString(),
+    image: meal.image,
   });
 
   return sendResponse(
@@ -196,7 +196,10 @@ exports.cancelMeal = asyncHandler(async (req, res) => {
   if (meal.collectorId) {
     emitMealCancelled({
       collectorId: meal.collectorId.toString(),
+      donorId: meal.donorId.toString(),
       mealId: mealId.toString(),
+      foodDesc: meal.foodDesc,
+      image: meal.image,
     });
   }
 
