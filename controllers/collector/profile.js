@@ -6,11 +6,11 @@ const ServerError = require("../../utils/server_error");
 
 exports.getCollector = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const donor = await Collector.findById(id);
-  if (!donor) {
+  const collector = await Collector.findById(id);
+  if (!collector) {
     throw new ServerError("Collector not found.", 404);
   }
-  sendResponse(res, 200, "Collector profile fetched successfully", donor);
+  sendResponse(res, 200, "Collector profile fetched successfully", collector);
 });
 
 exports.editProfile = asyncHandler(async (req, res) => {

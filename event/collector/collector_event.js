@@ -48,7 +48,7 @@ function emitMealExpiredToCollector({
     donorId,
     image,
     foodDesc,
-    message: `Your booked ${foodDesc} has expired`,
+    message: `Your booked meal ${foodDesc} has expired`,
   });
 
   console.log("Meal expired event emitted to collector:", collectorId);
