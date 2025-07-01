@@ -28,13 +28,41 @@ exports.getMeals = asyncHandler(async (req, res) => {
     throw new ServerError("Collector city or state is missing", 400);
   }
 
-  const meals = await Meal.find({
-    city: city,
-    state: state,
+  const filters = {
+    city,
+    state,
     status: "available",
-  });
+  };
+
+  const { veg, minFeeds } = req.query;
+
+  if (veg === "true") {
+    filters.veg = true;
+  }
+
+  if (minFeeds) {
+    filters.feedsUpto = { $gte: Number(minFeeds) };
+  }
+
+  const meals = await Meal.find(filters);
 
   sendResponse(res, 200, "Meals fetched successfully", meals);
+});
+
+exports.getMealById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ServerError("Invalid meal ID", 400);
+  }
+
+  const meal = await Meal.findById(id);
+
+  if (!meal) {
+    throw new ServerError("Meal not found or not accessible", 404);
+  }
+
+  sendResponse(res, 200, "Meal fetched successfully", meal);
 });
 
 exports.bookMeal = asyncHandler(async (req, res) => {

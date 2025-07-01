@@ -8,6 +8,9 @@ route.get(
   tokenVerification,
   collectorController.getMeals
 );
+
+route.get("/get-available-meal/:id", collectorController.getMealById);
+
 route.post("/book-meal", tokenVerification, collectorController.bookMeal);
 route.get(
   "/get-booked-meals",
