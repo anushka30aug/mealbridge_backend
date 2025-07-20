@@ -43,7 +43,7 @@ exports.editProfile = asyncHandler(async (req, res) => {
   }
 
   if (username !== undefined) user.username = username;
-  if (contact !== undefined) user.contact = contact;
+  if (contact !== "" && contact!== undefined) user.contact = contact;
 
   if (allAddressFieldsPresent) {
     user.address = address;
