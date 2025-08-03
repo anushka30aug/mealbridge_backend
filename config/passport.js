@@ -24,7 +24,7 @@ passport.use(
           user = await Donor.findOne({ email: profile.emails[0].value });
           if (!user) {
             user = await Donor.create({
-              username: profile.displayName, 
+              username: profile.displayName,
               email: profile.emails[0].value,
               profilePicture: profile.photos[0].value,
             });
@@ -42,7 +42,7 @@ passport.use(
             });
           }
 
-          user.customRedirect = `http://localhost:3000/meals`;
+          user.customRedirect = `http://localhost:3000`;
         } else {
           return done(new Error("Invalid state parameter"), null);
         }
