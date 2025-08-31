@@ -17,9 +17,17 @@ const passport = require("passport");
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
+let MEALBRIDGE_DONATE = "http://localhost:3002";
+let MEALBRIDGE_COLLECTOR = "http://localhost:3000";
+
+if (process.env.ENV === "production") {
+  MEALBRIDGE_DONATE = process.env.MEALBRIDGE_DONATE;
+  MEALBRIDGE_COLLECTOR = process.env.MEALBRIDGE_COLLECTOR;
+}
+
 app.use(
   cors({
-    origin: ["http://localhost:3002", "http://localhost:3000"],
+    origin: [MEALBRIDGE_DONATE, MEALBRIDGE_COLLECTOR],
     credentials: true,
   })
 );
@@ -74,5 +82,5 @@ app.use((err, req, res, next) => {
 });
 
 server.listen(port, () => {
-  console.log(`MealBridge is running on port: http://localhost:${port}`);
+  console.log("MealBridge is running");
 });
