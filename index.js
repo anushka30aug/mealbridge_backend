@@ -13,6 +13,7 @@ const server = http.createServer(app);
 const sendResponse = require("./utils/send_response");
 const registerSocketHandlers = require("./event");
 const passport = require("passport");
+const path = require("path");
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
@@ -57,7 +58,7 @@ main()
   });
 
 app.get("/", (req, res) => {
-  res.send("Hello world");
+  res.sendFile(path.join(__dirname, "views", "home.html"));
 });
 
 app.use("/authentication", require("./routes/authentication/auth"));

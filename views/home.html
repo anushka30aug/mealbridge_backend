@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MealBridge Backend</title>
+    <style>
+      /* General */
+      body {
+        font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #0b0b0d;
+        color: #e6e6e6;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+      }
+
+      h1,
+      h2 {
+        margin: 0;
+        font-weight: 600;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+        color: #7dd87d;
+      }
+
+      p {
+        opacity: 0.9;
+      }
+
+      /* Header */
+      /* Header */
+      /* Header */
+      header {
+        background: linear-gradient(-45deg, #43a047, #2ecc71, #1b5e20, #14532d);
+        background-size: 400% 400%;
+        animation: gradientShift 12s ease infinite;
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* Main heading */
+      header h1 {
+        font-size: 3.2rem;
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: 1px;
+        animation: fadeInScale 1.5s ease forwards;
+      }
+
+      /* Tagline - no typing effect, clean fade */
+      header p {
+        margin-top: 1rem;
+        font-size: 1.2rem;
+        font-weight: 400;
+        opacity: 0;
+        animation: fadeInUp 1.8s ease forwards;
+      }
+
+      /* Animations */
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      @keyframes fadeInScale {
+        0% {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes fadeInUp {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Container */
+      .container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      /* Card Sections */
+      section {
+        background: #111113;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-radius: 14px;
+        border: 1px solid #1f1f23;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+        transition: transform 0.25s ease;
+      }
+
+      section:hover {
+        transform: translateY(-2px);
+        border-color: #2ecc71;
+      }
+
+      /* Table */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        border-radius: 8px;
+        overflow: hidden;
+        font-size: 0.95rem;
+      }
+
+      table th,
+      table td {
+        padding: 0.9rem;
+        text-align: left;
+      }
+
+      table th {
+        background: #1a1a1d;
+        color: #7dd87d;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+      }
+
+      table tr:nth-child(even) {
+        background: #141414;
+      }
+
+      table tr:nth-child(odd) {
+        background: #101010;
+      }
+
+      table tr:hover {
+        background: #1b1b1b;
+      }
+
+      /* Tech stack */
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      ul li {
+        padding: 0.5rem 0;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      ul li::before {
+        content: "✔";
+        color: #2ecc71;
+        font-weight: bold;
+      }
+
+      /* Links Section */
+      .links {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1.2rem;
+      }
+
+      .link-card {
+        flex: 1;
+        min-width: 200px;
+        text-align: center;
+        background: #161616;
+        border: 1px solid #1f1f23;
+        padding: 1rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+      }
+
+      .link-card:hover {
+        border-color: #2ecc71;
+        transform: translateY(-3px);
+      }
+
+      .link-card a {
+        color: #7dd87d;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 1.05rem;
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        padding: 1.5rem;
+        font-size: 0.9rem;
+        color: #a0a0a0;
+        border-top: 1px solid #1a1a1d;
+        margin-top: 3rem;
+      }
+
+      .footer span {
+        color: #2ecc71;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🍲 MealBridge Backend</h1>
+      <p id="tagline">
+        Connecting donors with NGOs & collectors to fight food waste
+      </p>
+    </header>
+
+    <div class="container">
+      <section>
+        <h2>About the Project</h2>
+        <p>
+          <span style="color: #2ecc71; font-weight: 600;">MealBridge</span> is a
+          platform where <strong>Donors</strong> can list surplus meals, and
+          <strong>Collectors (NGOs)</strong> can accept and distribute them to
+          those in need.
+        </p>
+        <p>
+          This backend powers authentication, user management, donation posting,
+          collection handling, real-time updates via <strong>Socket.IO</strong>,
+          and secure communication between donors and collectors.
+        </p>
+      </section>
+
+      <section>
+        <h2>API Overview</h2>
+        <table>
+          <tr>
+            <th>Route</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td><code>/authentication</code></td>
+            <td>Login, signup, and session handling using Passport.js</td>
+          </tr>
+          <tr>
+            <td><code>/user</code></td>
+            <td>Universal user profile endpoints</td>
+          </tr>
+          <tr>
+            <td><code>/donor</code></td>
+            <td>Endpoints for donors to post meals & manage profiles</td>
+          </tr>
+          <tr>
+            <td><code>/collector</code></td>
+            <td>Endpoints for collectors (NGOs) to view & accept donations</td>
+          </tr>
+          <tr>
+            <td><code>/meal</code></td>
+            <td>Handles OTP verification for meal collection</td>
+          </tr>
+        </table>
+      </section>
+
+      <section>
+        <h2>Tech Stack</h2>
+        <ul>
+          <li>Express.js – REST API backend</li>
+          <li>MongoDB – Database</li>
+          <li>Passport.js – Authentication</li>
+          <li>Socket.IO – Real-time updates</li>
+          <li>Next.js – Donor & Collector frontends</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Explore Apps</h2>
+        <div class="links">
+          <div class="link-card">
+            <a href="https://mealbridge-donate.vercel.app" target="_blank"
+              >🍴 Donor App</a
+            >
+          </div>
+          <div class="link-card">
+            <a href="https://mealbridge-collect.vercel.app" target="_blank"
+              >📦 Collector App</a
+            >
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer">
+      © <span id="year"></span> MealBridge | Powered by <span>Node.js</span> &
+      <span>Express</span>
+    </div>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
